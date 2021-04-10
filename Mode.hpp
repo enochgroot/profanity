@@ -12,7 +12,8 @@
 enum HashTarget {
 	ADDRESS,
 	CONTRACT,
-	HASH_TARGET_COUNT
+	HASH_TARGET_COUNT,
+	POW
 };
 
 class Mode {

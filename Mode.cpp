@@ -102,6 +102,8 @@ std::string Mode::transformKernel() const {
 			return "";
 		case CONTRACT:
 			return "profanity_transform_contract";
+		case POW:
+			return "profanity_solve_pow";
 		default:
 			throw "No kernel for target";
 	}
@@ -113,6 +115,8 @@ std::string Mode::transformName() const {
 			return "Address";
 		case CONTRACT:
 			return "Contract";
+		case POW:
+			return "ProofOfWork";
 		default:
 			throw "No name for target";
 	}

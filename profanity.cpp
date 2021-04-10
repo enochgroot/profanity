@@ -163,6 +163,7 @@ int main(int argc, char * * argv) {
 		size_t inverseSize = 255;
 		size_t inverseMultiple = 16384;
 		bool bMineContract = false;
+		bool bMinePOW = false;
 
 		argp.addSwitch('h', "help", bHelp);
 		argp.addSwitch('0', "benchmark", bModeBenchmark);
@@ -184,6 +185,7 @@ int main(int argc, char * * argv) {
 		argp.addSwitch('i', "inverse-size", inverseSize);
 		argp.addSwitch('I', "inverse-multiple", inverseMultiple);
 		argp.addSwitch('c', "contract", bMineContract);
+		argp.addSwitch('p', "pow", bMinePOW);
 
 		if (!argp.parse()) {
 			std::cout << "error: bad arguments, try again :<" << std::endl;
@@ -224,6 +226,8 @@ int main(int argc, char * * argv) {
 
 		if (bMineContract) {
 			mode.target = CONTRACT;
+		} else if (bMinePOW) {
+			mode.target = POW;
 		} else {
 			mode.target = ADDRESS;
 		}

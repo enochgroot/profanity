@@ -702,6 +702,61 @@ __kernel void profanity_transform_contract(__global mp_number * const pInverse) 
 	pInverse[id].d[4] = h.d[7];
 }
 
+__kernel void profanity_solve_pow(__global mp_number * const pInverse) {
+	const size_t id = get_global_id(0);
+	__global const uchar * const hash = pInverse[id].d;
+
+	ethhash h;
+	for (int i = 0; i < 50; ++i) {
+		h.d[i] = 0;
+	}
+	// set up keccak(address, id, once)
+	//        keccak(0xa1111ac011d00888dd91751a4b98769862213cf5, 0, x)
+	// this is 160 bits for the (address)
+	// TODO: take this as an arg
+	h.b[0]  = 0xa1; 
+	h.b[1]  = 0x11; 
+	h.b[2]  = 0x1a; 
+	h.b[3]  = 0xc0; 
+	h.b[4]  = 0x11; 
+	h.b[5]  = 0xd0; 
+	h.b[6]  = 0x08; 
+	h.b[7]  = 0x88; 
+	h.b[8]  = 0xdd; 
+	h.b[9]  = 0x91; 
+	h.b[10] = 0x75; 
+	h.b[11] = 0x1a;
+	h.b[12] = 0x4b;
+	h.b[13] = 0x98;
+	h.b[14] = 0x76;
+	h.b[15] = 0x98;
+	h.b[16] = 0x62;
+	h.b[17] = 0x21;
+	h.b[18] = 0x3c;
+	h.b[19] = 0xf5;
+
+	// this is another 256 bits for the (id)
+	// TODO: take this as an arg
+	for (int i = 0; i < 128; ++i) {
+		h.b[i + 20] = 0;
+	}
+
+	// this is another 256 bits for the (nonce)
+	// TODO: make this not a hack using the hash
+	for (int i = 0; i < 20; i++) {
+		h.b[i + 128] = hash[i];
+	}
+
+	h.b[148] ^= 0x01; // length 148
+	sha3_keccakf(&h);
+
+	pInverse[id].d[0] = h.d[3];
+	pInverse[id].d[1] = h.d[4];
+	pInverse[id].d[2] = h.d[5];
+	pInverse[id].d[3] = h.d[6];
+	pInverse[id].d[4] = h.d[7];
+}
+
 __kernel void profanity_score_benchmark(__global mp_number * const pInverse, __global result * const pResult, __constant const uchar * const data1, __constant const uchar * const data2, const uchar scoreMax) {
 	const size_t id = get_global_id(0);
 	__global const uchar * const hash = pInverse[id].d;
